@@ -41,13 +41,10 @@ class Fornecedor(models.Model):
         ('Pendente', 'Pendente'),
     ]
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Integrado')
-<<<<<<< HEAD
     validade_meses = models.IntegerField()
     data_integracao = models.DateField()
-=======
     validade_meses = models.IntegerField(help_text="Validade em meses")
     data_integracao = models.DateField(blank=True, null=True)
->>>>>>> c0675d3cbcdb76eeed5a80b651c417cd58e6d0b0
     data_validade = models.DateField(null=True, blank=True)
 
     def save(self, *args, **kwargs):
@@ -65,7 +62,7 @@ class Fornecedor(models.Model):
                 self.status = 'Integrado'
 
         super().save(*args, **kwargs)
-<<<<<<< HEAD
+
         
     def __str__(self):
         return self.nome
@@ -129,7 +126,6 @@ class EntradaFornecedorAvulso(models.Model):
 
     def __str__(self):
         return f"{self.fornecedor_nome} - {self.data}"
-=======
 
     def emitiu_alerta_validade(self):
         """Retorna True se está a 7 dias ou menos do vencimento."""
@@ -140,4 +136,3 @@ class EntradaFornecedorAvulso(models.Model):
 
     def __str__(self):
         return f"{self.nome} ({self.cnpj})"
->>>>>>> c0675d3cbcdb76eeed5a80b651c417cd58e6d0b0
