@@ -31,6 +31,7 @@ class ControleChaves(models.Model):
         return f'{self.matricula} - {self.situacao}'
 
 
+
 class Fornecedor(models.Model):
     cpf = models.CharField(max_length=18)
     nome = models.CharField(max_length=255)
@@ -40,25 +41,31 @@ class Fornecedor(models.Model):
         ('Pendente', 'Pendente'),
     ]
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Integrado')
+<<<<<<< HEAD
     validade_meses = models.IntegerField()
     data_integracao = models.DateField()
+=======
+    validade_meses = models.IntegerField(help_text="Validade em meses")
+    data_integracao = models.DateField(blank=True, null=True)
+>>>>>>> c0675d3cbcdb76eeed5a80b651c417cd58e6d0b0
     data_validade = models.DateField(null=True, blank=True)
 
     def save(self, *args, **kwargs):
         if not self.data_integracao:
             self.data_integracao = date.today()
 
-        # Calcula a data de validade a partir da data de integração + meses
         if self.validade_meses:
             self.data_validade = self.data_integracao + relativedelta(months=self.validade_meses)
 
-        # Atualiza status com base na validade
-        if self.data_validade and date.today() >= self.data_validade:
-            self.status = 'Pendente'
-        else:
-            self.status = 'Integrado'
+        # Atualiza status
+        if self.data_validade:
+            if date.today() >= self.data_validade:
+                self.status = 'Pendente'
+            else:
+                self.status = 'Integrado'
 
         super().save(*args, **kwargs)
+<<<<<<< HEAD
         
     def __str__(self):
         return self.nome
@@ -122,3 +129,15 @@ class EntradaFornecedorAvulso(models.Model):
 
     def __str__(self):
         return f"{self.fornecedor_nome} - {self.data}"
+=======
+
+    def emitiu_alerta_validade(self):
+        """Retorna True se está a 7 dias ou menos do vencimento."""
+        if self.data_validade:
+            dias_restantes = (self.data_validade - date.today()).days
+            return dias_restantes <= 7 and dias_restantes >= 0
+        return False
+
+    def __str__(self):
+        return f"{self.nome} ({self.cnpj})"
+>>>>>>> c0675d3cbcdb76eeed5a80b651c417cd58e6d0b0
