@@ -32,7 +32,7 @@ class ControleChaves(models.Model):
 
 
 class Fornecedor(models.Model):
-    cnpj = models.CharField(max_length=18)
+    cpf = models.CharField(max_length=18)
     nome = models.CharField(max_length=255)
 
     STATUS_CHOICES = [
@@ -92,3 +92,33 @@ class EntradaFornecedor(models.Model):
 
     def __str__(self):
         return f"{self.fornecedor.nome} - {self.data}"
+    
+class EntradaFornecedorAvulso(models.Model):
+    STATUS_CHOICES = [
+        ('Em andamento', 'Em andamento'),
+        ('Saiu', 'Saiu'),
+    ]
+
+    data = models.DateField(auto_now_add=True)
+    horario_entrada = models.TimeField(auto_now_add=True)
+    horario_saida = models.TimeField(null=True, blank=True)
+
+    base = models.CharField(max_length=100)
+    fornecedor_nome = models.CharField(max_length=100)  # Nome digitado do fornecedor avulso
+    cpf_ou_cnpj = models.CharField(max_length=20)       # CPF ou CNPJ digitado manualmente
+    quantidade = models.IntegerField()
+    visitantes = models.TextField()
+    tipo_documento = models.TextField()
+    documento = models.TextField()
+    setor = models.CharField(max_length=100)
+    responsavel = models.CharField(max_length=100)
+    assinatura_portaria = models.CharField(max_length=100)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Em andamento')
+
+    def save(self, *args, **kwargs):
+        if self.status == 'Saiu' and self.horario_saida is None:
+            self.horario_saida = datetime.now().time()
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.fornecedor_nome} - {self.data}"
